@@ -149,3 +149,4 @@ bool ClassicLife::isEmpty(){
 bool ClassicLife::isStable(){
   return true;
 }
+//this has changed
