@@ -132,5 +132,7 @@ int main(int argc, char**argv){
     }
   }
   //exit main method
+  cout<<"Press Enter to Exit Program.";
+  getchar();
   return 0;
 }
