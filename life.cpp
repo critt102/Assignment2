@@ -20,7 +20,7 @@ Life::Life(){
   height=1;
   numvar=1;
   loopvalue=0;
-  currentvalue=2;
+  currentvalue=0;
   cell='-';
   thiscell=false;
   enter=false;
@@ -33,9 +33,11 @@ Life::Life(){
   inArray=new char[numvar];
   lifeArray= new char*[width];
   newArray=new char*[width];
+  oscilArray=new char*[width];
   for(int k = 0; k < width; ++k){
     lifeArray[k] = new char[height];
     newArray[k] = new char[height];
+    oscilArray[k]=new char[height];
   }
 }
 /**
@@ -46,7 +48,7 @@ Life::Life(){
 Life::Life(string filename){
   numvar=0;
   loopvalue=0;
-  currentvalue=2;
+  currentvalue=0;
   cell='-';
   thiscell=false;
   sim=0;
@@ -66,16 +68,24 @@ Life::Life(string filename){
     cin>>out_name;
     out_file.open(out_name, ios::out);
   }
-  else{
+  else if(outputfile=='n' || outputfile=='N'){
     cout<<"Do you want to press the enter key between generations? y or n? "<<endl;
     cin>>enter_in;
     enter_in=tolower(enter_in);
-    if(enter_in=='y'){
+    if(enter_in=='y' || enter_in=='Y'){
       enter=true;
     }
-    else{
+    else if(enter_in=='n' || enter_in=='N'){
       enter=false;
     }
+    else{
+      cout<<"Input is not valid. Please enter either n or y."<<endl;
+      exit(0);
+    }
+  }
+  else{
+    cout<<"Input is not valid. Please enter either n or y."<<endl;
+    exit(0);
   }
   if(in_file.is_open()){
     //counting chars
@@ -91,20 +101,34 @@ Life::Life(string filename){
   inArray=new char[numvar];
   in_file.open(filename, ios::in);
   //take in all chars and put them in one array
+
+  int help=0;
   while(getline(in_file, line)){
-    for(int pp=0; pp<line.size();++pp){
-        inArray[loopvalue++]=line[pp];
+    if(help==0){
+      string height_s=line;
+      height=stoi(height_s);
+      help=1;
     }
+    else if(help==1){
+      string width_s=line;
+      width=stoi(width_s);
+      help=2;
+    }
+    else{
+      for(int pp=0; pp<line.size();++pp){
+        inArray[loopvalue++]=line[pp];
+      }
+    }
+
   }
-  //turn width and height into ints
-  height=inArray[0]-'0';
-  width=inArray[1]-'0';
   //create 2d arrays
   lifeArray= new char*[width];
   newArray=new char*[width];
+  oscilArray=new char*[width];
   for(int k = 0; k < width; ++k){
     lifeArray[k] = new char[height];
     newArray[k] = new char[height];
+    oscilArray[k]=new char[height];
   }
   //place variables from file intp 2d array
   for(int row=0; row<height; ++row){
@@ -129,7 +153,7 @@ Life::Life(int r_height, int r_width, double r_decimal){
   numvar=1;
   gen=0;
   loopvalue=0;
-  currentvalue=2;
+  currentvalue=0;
   cell='-';
   thiscell=false;
   sim=0;
@@ -142,24 +166,34 @@ Life::Life(int r_height, int r_width, double r_decimal){
     cin>>out_name;
     out_file.open(out_name, ios::out);
   }
-  else{
+  else if(outputfile=='n' || outputfile=='N'){
     cout<<"Do you want to press the enter key between generations? y or n? "<<endl;
     cin>>enter_in;
     enter_in=tolower(enter_in);
-    if(enter_in=='y'){
+    if(enter_in=='y'|| enter_in=='Y'){
       enter=true;
     }
-    else{
+    else if(enter_in=='n' || enter_in=='N'){
       enter=false;
     }
+    else{
+      cout<<"Input is not valid. Please enter either n or y."<<endl;
+      exit(0);
+    }
+  }
+  else{
+    cout<<"Input is not valid. Please enter either n or y."<<endl;
+    exit(0);
   }
 
   //create 2d array
   lifeArray= new char*[width];
   newArray=new char*[width];
+  oscilArray=new char*[width];
   for(int k = 0; k < width; ++k){
     lifeArray[k] = new char[height];
     newArray[k] = new char[height];
+    oscilArray[k]=new char[height];
   }
   //fill array with '-'
   for(int f=0; f<height; ++f){
@@ -336,6 +370,17 @@ void Life::runClassic(){
         }
       }
     }
+    //test for oscillating generations
+    if(test_equality==false){
+      test_equality=true;
+      for(int oscil=0; oscil<height; ++oscil){
+        for(int lation=0; lation<width; ++lation){
+          if(oscilArray[oscil][lation]!=newArray[oscil][lation]){
+            test_equality=false;
+          }
+        }
+      }
+    }
     if(out_file.is_open()==false){
       if(enter==true){
         cout<<"Press Enter to continue.";
@@ -359,6 +404,7 @@ void Life::runClassic(){
     if(lifeArray!=newArray){
       for(int copy_h=0; copy_h<height; ++copy_h){
         for(int copy_w=0; copy_w<width; ++copy_w){
+          oscilArray[copy_h][copy_w]=lifeArray[copy_h][copy_w];
           lifeArray[copy_h][copy_w]=newArray[copy_h][copy_w];
         }
       }
@@ -514,6 +560,17 @@ void Life::runDoughnut(){
       for(int ity=0; ity<width; ++ity){
         if(lifeArray[equal][ity]!=newArray[equal][ity]){
           test_equality=false;
+        }
+      }
+    }
+    //test for oscillating generations
+    if(test_equality==false){
+      test_equality=true;
+      for(int oscil=0; oscil<height; ++oscil){
+        for(int lation=0; lation<width; ++lation){
+          if(oscilArray[oscil][lation]!=newArray[oscil][lation]){
+            test_equality=false;
+          }
         }
       }
     }
@@ -696,6 +753,17 @@ void Life::runMirror(){
       for(int ity=0; ity<width; ++ity){
         if(lifeArray[equal][ity]!=newArray[equal][ity]){
           test_equality=false;
+        }
+      }
+    }
+    //test for oscillating generations
+    if(test_equality==false){
+      test_equality=true;
+      for(int oscil=0; oscil<height; ++oscil){
+        for(int lation=0; lation<width; ++lation){
+          if(oscilArray[oscil][lation]!=newArray[oscil][lation]){
+            test_equality=false;
+          }
         }
       }
     }

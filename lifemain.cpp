@@ -41,12 +41,28 @@ int main(int argc, char**argv){
       int r_height;
       //store width input
       int r_width;
-      cout<<"Enter the height of your desired grid size: ";
+
+      cout<<"Enter the height of your desired grid size: "<<endl;
       cin>>r_height;
+      //invalid input will cause program to exit
+      if(r_height>0==false){
+        cout<<"Height input is not valid. Please enter an integer value >0."<<endl;
+        exit(0);
+      }
       cout<<"Enter the width of your desired grid size: ";
       cin>>r_width;
+      //invalid input will cause program to exit
+      if(r_width>0==false){
+        cout<<"Width input is not valid. Please enter an integer value >0"<<endl;
+        exit(0);
+      }
       cout<<"Enter a decimal value greater than 0 and less than or equal to 1: ";
       cin>>r_decimal;
+      //invalid input will cause program to exit
+      if(r_decimal<=0 || r_decimal>1){
+        cout<<"Decimal input is not valid. Please enter an integer value >0 and <=1"<<endl;
+        exit(0);
+      }
       //initialize life game with random grid
       Life gameRand(r_height, r_width, r_decimal);
       //keeps asking for input until valid input is recieved
@@ -69,8 +85,9 @@ int main(int argc, char**argv){
           gameRand.runMirror();
           input_o=true;
         }
+        //invalid input will prompt user to enter another value
         else{
-          cout<<mode<<" is not a valid input."<<endl;
+          cout<<mode<<" is not a valid input. Try again."<<endl;
         }
       }
     }
@@ -103,14 +120,17 @@ int main(int argc, char**argv){
           gameOne.runMirror();
           input_o=true;
         }
+        //invalid input will prompt user to enter another value
         else{
-          cout<<mode<<" is not a valid input."<<endl;
+          cout<<mode<<" is not a valid input. Try again."<<endl;
         }
       }
     }
+    //invalid input will prompt user to enter another value
     else{
-      cout<<config<<" is not a valid input."<<endl;
+      cout<<config<<" is not a valid input. Try again."<<endl;
     }
   }
+  //exit main method
   return 0;
 }

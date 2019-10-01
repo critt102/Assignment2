@@ -78,4 +78,6 @@ class Life{
   char **lifeArray;
   //resulting array after generational rules are applied
   char **newArray;
+  //array used to check oscillating generation loop
+  char **oscilArray;
 };
